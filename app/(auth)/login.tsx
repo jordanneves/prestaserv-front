@@ -17,7 +17,7 @@ export default function Login() {
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Entrar</Text>
+        <Text onPress={() => {router.push('/services')}} style={styles.buttonText}>Entrar</Text>
       </TouchableOpacity>
 
       <Text style={styles.footerText}>
@@ -31,7 +31,7 @@ export default function Login() {
 }
 
 const styles = StyleSheet.create({
-  container: { flexGrow: 1, padding: 24, justifyContent: 'center', backgroundColor: "#ffffff" },
+  container: { flexGrow: 1, padding: 24, justifyContent: 'center', /*backgroundColor: "#ffffff"*/ },
   title: { fontSize: 28, fontWeight: 'bold', color: '#2A7BD2', marginBottom: 10 },
   subtitle: { fontSize: 16, color: '#777', marginBottom: 20 },
   input: {
