@@ -1,23 +1,47 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import { useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import { loginUsuario } from './loginApi';
 
 export default function Login() {
   const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async () => {
+    if (!email || !senha) {
+      Alert.alert('Erro', 'Preencha todos os campos.');
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await loginUsuario({ email, senha });
+      await AsyncStorage.setItem('token', res.access_token);
+      await AsyncStorage.setItem('usuario', JSON.stringify(res.usuario));
+      router.push('/'); // Redireciona para a página inicial após login
+    } catch (error: any) {
+      Alert.alert('Erro', error.message || 'Email ou senha inválidos');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Login</Text>
       <Text style={styles.subtitle}>Entre com suas credenciais abaixo.</Text>
 
-      <TextInput placeholder="Email" style={styles.input} keyboardType="email-address" />
-      <TextInput placeholder="Senha" style={styles.input} secureTextEntry />
+      <TextInput placeholder="Email" style={styles.input} keyboardType="email-address" value={email} onChangeText={setEmail} autoCapitalize="none" />
+      <TextInput placeholder="Senha" style={styles.input} secureTextEntry value={senha} onChangeText={setSenha} />
 
       <TouchableOpacity onPress={() => {}} style={styles.forgotPassword}>
         <Text style={styles.forgotPasswordText}>Esqueceu sua senha?</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button}>
-        <Text onPress={() => {router.push('/services')}} style={styles.buttonText}>Entrar</Text>
+      <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
+        <Text style={styles.buttonText}>{loading ? 'Entrando...' : 'Entrar'}</Text>
       </TouchableOpacity>
 
       <Text style={styles.footerText}>

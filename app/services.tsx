@@ -1,15 +1,16 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
-    Alert,
-    Platform,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+import { createServico } from './servicesApi';
 
 interface ServiceFormData {
   serviceName: string;
@@ -24,18 +25,22 @@ export default function ServicesScreen(){
   const [serviceValue, setServiceValue] = useState<string>('');
   const [serviceMessage, setServiceMessage] = useState<string>('');
 
-  const handleSave = (): void => {
-    const formData: ServiceFormData = {
-      serviceName,
-      serviceType,
-      serviceValue,
-      serviceMessage,
-    };
-    console.log('Dados do Serviço:', formData);
-
-    //TODO: implementar save dos dados
-
-    Alert.alert('Sucesso', 'Serviço salvo com sucesso!');
+  const handleSave = async (): Promise<void> => {
+    try {
+      await createServico({
+        descricao: serviceName,
+        tipoServico: serviceType,
+        valorHora: Number(serviceValue),
+        mensagem: serviceMessage,
+      });
+      Alert.alert('Sucesso', 'Serviço salvo com sucesso!');
+      setServiceName('');
+      setServiceType('');
+      setServiceValue('');
+      setServiceMessage('');
+    } catch (error: any) {
+      Alert.alert('Erro', error.message || 'Erro ao salvar serviço');
+    }
   };
 
   return (

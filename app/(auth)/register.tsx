@@ -1,21 +1,75 @@
 import { useRouter } from 'expo-router';
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { createUsuario } from './registerApi';
 
 export default function Register() {
   const router = useRouter();
+  const [tipoUsuario, setTipoUsuario] = useState<'cliente' | 'fornecedor'>('cliente');
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [telefone, setTelefone] = useState('');
+  const [cpf, setCpf] = useState('');
+  const [endereco, setEndereco] = useState('');
+  const [senha, setSenha] = useState('');
+  const [confirmarSenha, setConfirmarSenha] = useState('');
+
+  const handleRegister = async () => {
+    if (!nome || !email || !telefone || !cpf || !endereco || !senha || !confirmarSenha) {
+      Alert.alert('Erro', 'Preencha todos os campos.');
+      return;
+    }
+    if (senha !== confirmarSenha) {
+      Alert.alert('Erro', 'As senhas não coincidem.');
+      return;
+    }
+    try {
+      await createUsuario({
+        nome,
+        email,
+        telefone,
+        cpf,
+        endereco,
+        senha,
+        tipo: tipoUsuario,
+      });
+      Alert.alert('Sucesso', 'Usuário cadastrado com sucesso!');
+      router.push('/(auth)/login');
+    } catch (error: any) {
+      Alert.alert('Erro', error.message || 'Erro ao cadastrar usuário');
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Registro</Text>
       <Text style={styles.subtitle}>Por favor insira os detalhes para o registro.</Text>
 
-      <TextInput placeholder="Nome" style={styles.input} />
-      <TextInput placeholder="Email" style={styles.input} keyboardType="email-address" />
-      <TextInput placeholder="Telefone" style={styles.input} keyboardType="phone-pad" />
-      <TextInput placeholder="Senha" style={styles.input} secureTextEntry />
-      <TextInput placeholder="Confirmar senha" style={styles.input} secureTextEntry />
+      <TextInput placeholder="Nome" style={styles.input} value={nome} onChangeText={setNome} />
+      <TextInput placeholder="Email" style={styles.input} keyboardType="email-address" value={email} onChangeText={setEmail} />
+      <TextInput placeholder="Telefone" style={styles.input} keyboardType="phone-pad" value={telefone} onChangeText={setTelefone} />
+      <TextInput placeholder="CPF/CNPJ" style={styles.input} value={cpf} onChangeText={setCpf} />
+      <TextInput placeholder="Endereço" style={styles.input} value={endereco} onChangeText={setEndereco} />
+      <TextInput placeholder="Senha" style={styles.input} secureTextEntry value={senha} onChangeText={setSenha} />
+      <TextInput placeholder="Confirmar senha" style={styles.input} secureTextEntry value={confirmarSenha} onChangeText={setConfirmarSenha} />
 
-      <TouchableOpacity style={styles.button}>
+      <Text style={styles.inputLabel}>Tipo de Usuário</Text>
+      <View style={styles.tipoUsuarioContainer}>
+        <TouchableOpacity
+          style={[styles.tipoUsuarioButton, tipoUsuario === 'cliente' && styles.tipoUsuarioButtonAtivo]}
+          onPress={() => setTipoUsuario('cliente')}
+        >
+          <Text style={tipoUsuario === 'cliente' ? styles.tipoUsuarioTextAtivo : styles.tipoUsuarioText}>Cliente</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tipoUsuarioButton, tipoUsuario === 'fornecedor' && styles.tipoUsuarioButtonAtivo]}
+          onPress={() => setTipoUsuario('fornecedor')}
+        >
+          <Text style={tipoUsuario === 'fornecedor' ? styles.tipoUsuarioTextAtivo : styles.tipoUsuarioText}>Fornecedor</Text>
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity style={styles.button} onPress={handleRegister}>
         <Text style={styles.buttonText}>Registrar</Text>
       </TouchableOpacity>
 
@@ -30,7 +84,7 @@ export default function Register() {
 }
 
 const styles = StyleSheet.create({
-  container: { flexGrow: 1, padding: 24, justifyContent: 'center', /*backgroundColor: "#ffffff"*/ },
+  container: { flexGrow: 1, padding: 24, justifyContent: 'center' },
   title: { fontSize: 28, fontWeight: 'bold', color: '#2A7BD2', marginBottom: 10 },
   subtitle: { fontSize: 16, color: '#777', marginBottom: 20 },
   input: {
@@ -39,6 +93,38 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     marginBottom: 16,
     fontSize: 16,
+  },
+  inputLabel: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 5,
+    marginTop: 10,
+  },
+  tipoUsuarioContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  tipoUsuarioButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: '#2A7BD2',
+    borderRadius: 6,
+    marginHorizontal: 5,
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  tipoUsuarioButtonAtivo: {
+    backgroundColor: '#2A7BD2',
+  },
+  tipoUsuarioText: {
+    color: '#2A7BD2',
+    fontWeight: 'bold',
+  },
+  tipoUsuarioTextAtivo: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
   button: {
     backgroundColor: '#2A7BD2',
