@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function Home() {
-  const [usuario, setUsuario] = useState<{ nome: string; email: string } | null>(null);
+  const [usuario, setUsuario] = useState<{ nome: string; email: string; tipo: string } | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const router = useRouter();
 
@@ -14,7 +14,7 @@ export default function Home() {
       if (usuarioStr) {
         try {
           const user = JSON.parse(usuarioStr);
-          setUsuario({ nome: user.nome, email: user.email });
+          setUsuario({ nome: user.nome, email: user.email, tipo: user.tipo });
         } catch {}
       }
     };
@@ -27,13 +27,33 @@ export default function Home() {
     setModalVisible(false);
     router.replace('/(auth)/login');
   };
+  const renderPrestador = ()=>{
+    return <>
+      <TouchableOpacity style={styles.button} onPress={() => router.push('/prestador/lista-servicos')}>
+        <Text style={styles.buttonText}>Meus serviços</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={[styles.button, { backgroundColor: '#4CAF50', marginTop: 10 }]} onPress={() => router.push('/servicos-contratados')}>
+        <Text style={styles.buttonText}>Meus agendamentos</Text>
+      </TouchableOpacity>
+    </>
+  }
+  const renderCliente = ()=>{
+    return <>
+      <TouchableOpacity style={styles.button} onPress={() => router.push('/services')}>
+        <Text style={styles.buttonText}>Contratar Serviços</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={[styles.button, { backgroundColor: '#4CAF50', marginTop: 10 }]} onPress={() => router.push('/servicos-contratados')}>
+        <Text style={styles.buttonText}>Meus Serviços Contratados</Text>
+      </TouchableOpacity>
+    </>
+  }
 
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.userIcon} onPress={() => setModalVisible(true)}>
         <Text style={styles.userIconText}>👤</Text>
       </TouchableOpacity>
-      <Text style={styles.title}>Pagina Inicial Prestaserv</Text>
+      <Text style={styles.title}>Página Inicial Prestaserv</Text>
       <Modal
         visible={modalVisible}
         transparent
@@ -60,12 +80,7 @@ export default function Home() {
           </View>
         </View>
       </Modal>
-      <TouchableOpacity style={styles.button} onPress={() => router.push('/services')}>
-        <Text style={styles.buttonText}>Contratar Serviços</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.button, { backgroundColor: '#4CAF50', marginTop: 10 }]} onPress={() => router.push('/servicos-contratados')}>
-        <Text style={styles.buttonText}>Meus Serviços Contratados</Text>
-      </TouchableOpacity>
+      {usuario?.tipo === "fornecedor" ? renderPrestador() : renderCliente()}
     </View>
   );
 }
