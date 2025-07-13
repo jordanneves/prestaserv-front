@@ -53,6 +53,7 @@ export type Contrato = {
 export default function ServicosContratadosCliente() {
   const [contratos, setContratos] = useState<Contrato[]>([]);
   const [loading, setLoading] = useState(false);
+  const [usuarioId, setUsuarioId] = useState<string | null>(null);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [avaliacao, setAvaliacao] = useState({
@@ -69,8 +70,8 @@ export default function ServicosContratadosCliente() {
       const usuario = await AsyncStorage.getItem('usuario');
       if (!usuario) throw new Error('ID do cliente não encontrado');
       const parsedUsuario = JSON.parse(usuario);
-
-      const response = await fetch(`http://localhost:3000/contratos?clienteId=${parsedUsuario?.id}`);
+      setUsuarioId(parsedUsuario.id);
+      const response = await fetch(`http://localhost:3000/contratos?clienteId=${parsedUsuario.id}`);
       const data = await response.json();
       setContratos(data);
     } catch (error) {
@@ -148,17 +149,19 @@ export default function ServicosContratadosCliente() {
     );
   };
 
+  // Se quiser garantir o filtro mesmo se a API não filtrar corretamente:
+  const contratosFiltrados = usuarioId ? contratos.filter(c => c.cliente?.id === Number(usuarioId)) : [];
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Serviços Contratados</Text>
-
       {loading ? (
         <ActivityIndicator size="large" color="#2A7BD2" />
-      ) : contratos.length === 0 ? (
+      ) : contratosFiltrados.length === 0 ? (
         <Text style={styles.emptyText}>Você ainda não contratou nenhum serviço.</Text>
       ) : (
         <FlatList
-          data={contratos}
+          data={contratosFiltrados}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
           contentContainerStyle={{ paddingBottom: 20 }}
