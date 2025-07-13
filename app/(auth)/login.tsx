@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
 import { loginUsuario } from './loginApi';
 
 export default function Login() {
@@ -30,6 +30,10 @@ export default function Login() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <Image
+        source={require('../../LogoPrestaservFundo.png')}
+        style={styles.logo}
+      />
       <Text style={styles.title}>Login</Text>
       <Text style={styles.subtitle}>Entre com suas credenciais abaixo.</Text>
 
@@ -55,15 +59,17 @@ export default function Login() {
 }
 
 const styles = StyleSheet.create({
-  container: { flexGrow: 1, padding: 24, justifyContent: 'center', /*backgroundColor: "#ffffff"*/ },
-  title: { fontSize: 28, fontWeight: 'bold', color: '#2A7BD2', marginBottom: 10 },
-  subtitle: { fontSize: 16, color: '#777', marginBottom: 20 },
+  container: { flexGrow: 1, padding: 24, justifyContent: 'center', backgroundColor: "#dadef5" },
+  title: { fontSize: 28, fontWeight: 'bold', color: '#0b0c0c', marginBottom: 10 },
+  subtitle: { fontSize: 16, color: '#0b0c0c', marginBottom: 20 },
   input: {
     borderBottomWidth: 1,
     borderColor: '#ccc',
+    backgroundColor: '#fff',
     paddingVertical: 10,
     marginBottom: 16,
     fontSize: 16,
+    borderRadius: 6,
   },
   forgotPassword: { alignItems: 'flex-end', marginBottom: 24 },
   forgotPasswordText: { color: '#2A7BD2', fontSize: 14 },
@@ -75,6 +81,17 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
-  footerText: { textAlign: 'center', fontSize: 14 },
+  footerText: { textAlign: 'center', fontSize: 14/*, backgroundColor: '#f2f5f5ff'*/ },
   link: { color: '#2A7BD2', fontWeight: 'bold' },
+  background: {
+    flex: 1,
+    resizeMode: 'cover',
+  },
+  logo: {
+    width: 200,
+    height: 100,
+    resizeMode: 'contain',
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
 });

@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
@@ -54,29 +54,8 @@ export type Contrato = {
 export default function ServicosContratadosCliente() {
   const [contratos, setContratos] = useState<Contrato[]>([]);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     const carregarContratos = async () => {
-  //       setLoading(true);
-  //       try {
-  //         const usuario = await AsyncStorage.getItem('usuario');
-  //         if (!usuario) throw new Error('ID do cliente não encontrado');
-  //         const parsedUsuario = JSON.parse(usuario);
-
-  //         const response = await fetch(`http://localhost:3000/contratos?fornecedorId=${parsedUsuario?.id}`);
-  //         const data = await response.json();
-  //         setContratos(data);
-  //       } catch (error) {
-  //         console.error('Erro ao carregar contratos:', error);
-  //       } finally {
-  //         setLoading(false);
-  //       }
-  //     };
-
-  //     carregarContratos();
-  //   }, [])
-  // );
   const carregarContratos = useCallback(async () => {
     setLoading(true);
     try {
@@ -171,6 +150,13 @@ export default function ServicosContratadosCliente() {
           contentContainerStyle={{ paddingBottom: 20 }}
         />
       )}
+
+      <TouchableOpacity
+        style={styles.botaoVoltar}
+        onPress={() => router.back()}
+      >
+        <Text style={styles.botaoTexto}>Voltar</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -178,7 +164,7 @@ export default function ServicosContratadosCliente() {
 const styles = StyleSheet.create({
   container: { flex: 1,
   padding: 24,
-  backgroundColor: '#fff',
+  backgroundColor: '#dadef5',
   width: '100%',  },
   title: { fontSize: 22, fontWeight: 'bold', marginBottom: 16, color: '#2A7BD2' },
   card: {
@@ -214,6 +200,13 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     alignItems: 'center',
+  },
+  botaoVoltar: {
+    backgroundColor: '#6c757d',
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 12,
   },
   botaoTexto: {
     color: '#fff',

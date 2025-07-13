@@ -91,7 +91,7 @@ export default function ListaServicos() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, backgroundColor: '#fff' },
+  container: { flex: 1, padding: 24, backgroundColor: '#dadef5' },
   title: { fontSize: 22, fontWeight: 'bold', marginBottom: 16, color: '#2A7BD2' },
   card: {
     backgroundColor: '#f4f4f4',

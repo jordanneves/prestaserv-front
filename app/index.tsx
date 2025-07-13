@@ -1,11 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function Home() {
   const [usuario, setUsuario] = useState<{ nome: string; email: string; tipo: string } | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [contactModalVisible, setContactModalVisible] = useState(false);
+  const [contactMessage, setContactMessage] = useState('');
+  const [contactSuccess, setContactSuccess] = useState(false);
+  const [contactError, setContactError] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -50,10 +54,13 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.userIcon} onPress={() => setModalVisible(true)}>
-        <Text style={styles.userIconText}>👤</Text>
-      </TouchableOpacity>
-      <Text style={styles.title}>Página Inicial Prestaserv</Text>
+        <Image
+          source={require('../LogoPrestaservFundo.png')}
+          style={styles.logo}
+        />
+        <TouchableOpacity style={styles.userIcon} onPress={() => setModalVisible(true)}>
+          <Text style={styles.userIconText}>👤</Text>
+        </TouchableOpacity>
       <Modal
         visible={modalVisible}
         transparent
@@ -74,6 +81,9 @@ export default function Home() {
             <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
               <Text style={styles.logoutButtonText}>Sair</Text>
             </TouchableOpacity>
+            <TouchableOpacity style={styles.contactButton} onPress={() => setContactModalVisible(true)}>
+              <Text style={styles.contactButtonText}>Fale Conosco</Text>
+            </TouchableOpacity>
             <TouchableOpacity onPress={() => setModalVisible(false)}>
               <Text style={styles.closeText}>Fechar</Text>
             </TouchableOpacity>
@@ -81,17 +91,96 @@ export default function Home() {
         </View>
       </Modal>
       {usuario?.tipo === "fornecedor" ? renderPrestador() : renderCliente()}
+      {/* Modal Fale Conosco */}
+      <Modal
+        visible={contactModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setContactModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalTitle}>Fale Conosco</Text>
+            <Text style={{marginBottom: 8, color: '#333'}}>Descreva sua dúvida ou sugestão:</Text>
+            <View style={{width: '100%'}}>
+              <TextInput
+                style={styles.contactInput}
+                placeholder="Digite sua mensagem..."
+                value={contactMessage}
+                onChangeText={text => { setContactMessage(text); if (contactError) setContactError(''); }}
+                multiline
+                numberOfLines={4}
+              />
+              {contactError ? (
+                <Text style={styles.contactError}>{contactError}</Text>
+              ) : null}
+            </View>
+            <TouchableOpacity style={styles.contactButton} onPress={() => {
+              if (!contactMessage.trim()) {
+                setContactError('Por favor, preencha a mensagem antes de enviar.');
+                return;
+              }
+              setContactSuccess(true);
+            }}>
+              <Text style={styles.contactButtonText}>Enviar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setContactModalVisible(false)}>
+              <Text style={styles.closeText}>Fechar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      {/* Modal de sucesso do contato */}
+      <Modal
+        visible={contactSuccess}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setContactSuccess(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalTitle}>Envio com Sucesso</Text>
+            <Text style={{marginBottom: 16, color: '#333', textAlign: 'center'}}>Sua mensagem foi enviada com sucesso!</Text>
+            <TouchableOpacity style={styles.contactButton} onPress={() => {
+              setContactSuccess(false);
+              setContactModalVisible(false);
+              setContactMessage('');
+            }}>
+              <Text style={styles.contactButtonText}>Ok</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' },
+  background: {
+    flex: 1,
+    resizeMode: 'cover',
+  },
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#dadef5' },
   title: { fontSize: 28, fontWeight: 'bold', color: '#2A7BD2', marginBottom: 24 },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    marginTop: 0,
+    marginBottom: 20,
+    position: 'relative',
+  },
+  logo: {
+    width: 200,
+    height: 100,
+    resizeMode: 'contain',
+    alignSelf: 'center',
+  },
   userIcon: {
     position: 'absolute',
-    top: 40,
     right: 24,
+    top: 0,
     backgroundColor: '#E3EFFF',
     borderRadius: 20,
     width: 40,
@@ -108,6 +197,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     alignItems: 'center',
     minWidth: 250,
+    paddingTop: 50,
   },
   userLabel: { fontWeight: 'bold', color: '#2A7BD2', fontSize: 16 },
   userValue: { marginBottom: 8, fontSize: 16, color: '#333' },
@@ -145,5 +235,33 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   logoutButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  contactButton: {
+    backgroundColor: '#2A7BD2',
+    borderRadius: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  contactButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
   closeText: { color: '#2A7BD2', marginTop: 8, fontSize: 15 },
+  contactInput: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 10,
+    minHeight: 60,
+    width: 240,
+    marginBottom: 12,
+    backgroundColor: '#fff',
+    textAlignVertical: 'top',
+  },
+  contactError: {
+    color: '#E53935',
+    fontSize: 14,
+    marginTop: 2,
+    marginBottom: 6,
+    textAlign: 'left',
+    width: '100%',
+  },
 });

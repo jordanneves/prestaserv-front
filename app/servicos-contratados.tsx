@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function ServicosContratados() {
   const [servicos, setServicos] = useState<any[]>([]);
@@ -50,6 +50,13 @@ export default function ServicosContratados() {
           ListEmptyComponent={<Text style={styles.vazio}>Nenhum serviço contratado.</Text>}
         />
       )}
+
+      <TouchableOpacity
+        style={styles.botaoVoltar}
+        onPress={() => router.back()}
+      >
+        <Text style={styles.botaoTexto}>Voltar</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -67,4 +74,12 @@ const styles = StyleSheet.create({
   servicoNome: { fontWeight: 'bold', fontSize: 18, color: '#2A7BD2' },
   servicoInfo: { fontSize: 15, color: '#333', marginTop: 2 },
   vazio: { textAlign: 'center', color: '#777', marginTop: 40 },
+  botaoVoltar: {
+    backgroundColor: '#6c757d',
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  botaoTexto: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
 });

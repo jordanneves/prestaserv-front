@@ -36,7 +36,15 @@ export default function Register() {
       Alert.alert('Sucesso', 'Usuário cadastrado com sucesso!');
       router.push('/(auth)/login');
     } catch (error: any) {
-      Alert.alert('Erro', error.message || 'Erro ao cadastrar usuário');
+      let errorMessage = 'Erro ao cadastrar usuário';
+      if (error?.response?.data?.message) {
+        errorMessage = Array.isArray(error.response.data.message)
+          ? error.response.data.message.join('\n')
+          : error.response.data.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+      Alert.alert('Erro', errorMessage);
     }
   };
 
@@ -84,7 +92,7 @@ export default function Register() {
 }
 
 const styles = StyleSheet.create({
-  container: { flexGrow: 1, padding: 24, justifyContent: 'center' },
+  container: { flexGrow: 1, padding: 24, justifyContent: 'center', backgroundColor: '#dadef5' },
   title: { fontSize: 28, fontWeight: 'bold', color: '#2A7BD2', marginBottom: 10 },
   subtitle: { fontSize: 16, color: '#777', marginBottom: 20 },
   input: {
