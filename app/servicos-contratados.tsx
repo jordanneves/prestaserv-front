@@ -17,7 +17,7 @@ export default function ServicosContratados() {
         const usuarioStr = await AsyncStorage.getItem('usuario');
         if (!usuarioStr) throw new Error('Usuário não encontrado');
         const usuario = JSON.parse(usuarioStr);
-        const res = await fetch(`http://localhost:3000/contratos/cliente/${usuario.id}`);
+        const res = await fetch(`http://localhost:3000/contratos?clienteId=${usuario?.id}`);
         if (!res.ok) throw new Error('Erro ao buscar serviços');
         const data = await res.json();
         setServicos(data);

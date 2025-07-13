@@ -32,17 +32,17 @@ export default function Home() {
       <TouchableOpacity style={styles.button} onPress={() => router.push('/prestador/lista-servicos')}>
         <Text style={styles.buttonText}>Meus serviços</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={[styles.button, { backgroundColor: '#4CAF50', marginTop: 10 }]} onPress={() => router.push('/servicos-contratados')}>
+      <TouchableOpacity style={[styles.button, { backgroundColor: '#4CAF50', marginTop: 10 }]} onPress={() => router.push('/prestador/servicos-contratados')}>
         <Text style={styles.buttonText}>Meus agendamentos</Text>
       </TouchableOpacity>
     </>
   }
   const renderCliente = ()=>{
     return <>
-      <TouchableOpacity style={styles.button} onPress={() => router.push('/services')}>
+      <TouchableOpacity style={styles.button} onPress={() => router.push('/cliente/lista-servicos-cliente')}>
         <Text style={styles.buttonText}>Contratar Serviços</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={[styles.button, { backgroundColor: '#4CAF50', marginTop: 10 }]} onPress={() => router.push('/servicos-contratados')}>
+      <TouchableOpacity style={[styles.button, { backgroundColor: '#4CAF50', marginTop: 10 }]} onPress={() => router.push('/cliente/servicos-contratados')}>
         <Text style={styles.buttonText}>Meus Serviços Contratados</Text>
       </TouchableOpacity>
     </>
