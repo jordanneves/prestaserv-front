@@ -43,7 +43,7 @@ export default function Home() {
   }
   const renderCliente = ()=>{
     return <>
-      <TouchableOpacity style={styles.button} onPress={() => router.push('/cliente/lista-servicos-cliente')}>
+      <TouchableOpacity style={styles.button} onPress={() => router.push('/cliente/lista-servicos-fornecedores')}>
         <Text style={styles.buttonText}>Contratar Serviços</Text>
       </TouchableOpacity>
       <TouchableOpacity style={[styles.button, { backgroundColor: '#4CAF50', marginTop: 10 }]} onPress={() => router.push('/cliente/servicos-contratados')}>

@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import {
@@ -21,6 +22,7 @@ type Servico = {
 export default function ListaServicos() {
   const [servicos, setServicos] = useState<Servico[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [usuarioId, setUsuarioId] = useState<string | null>(null);
   const router = useRouter();
 
   useFocusEffect(
@@ -28,13 +30,24 @@ export default function ListaServicos() {
       const carregarServicos = async () => {
         setLoading(true);
         try {
-          const response = await fetch('http://localhost:3000/servicos'); // Altere o host se necessário
+          const usuario = await AsyncStorage.getItem('usuario');
+          if (!usuario) throw new Error('ID do fornecedor não encontrado');
+          const parsedUsuario = JSON.parse(usuario);
+          setUsuarioId(parsedUsuario.id);
+          const response = await fetch(`http://localhost:3000/usuarios-servicos?usuarioId=${parsedUsuario.id}`);
           if (!response.ok) {
             throw new Error('Erro ao buscar serviços');
           }
-
           const data = await response.json();
-          setServicos(data);
+          // Ajusta para o formato esperado pelo componente
+          const servicos = (data || []).map((item: any) => ({
+            id: item.servico?.id?.toString() || item.id?.toString() || '',
+            descricao: item.servico?.descricao || '',
+            tipoServico: item.servico?.tipoServico || '',
+            valorHora: item.precoPersonalizado || '',
+            mensagem: item.descricao || '',
+          }));
+          setServicos(servicos);
         } catch (error) {
           console.error('Erro ao carregar serviços:', error);
           Alert.alert('Erro', 'Não foi possível carregar os serviços.');
@@ -75,7 +88,7 @@ export default function ListaServicos() {
 
       <TouchableOpacity
         style={styles.botaoNovoServico}
-        onPress={() => router.push('/prestador/cadastro-servico')}
+        onPress={() => router.push('/prestador/lista-todos-servicos')}
       >
         <Text style={styles.botaoTexto}>Novo Serviço</Text>
       </TouchableOpacity>
