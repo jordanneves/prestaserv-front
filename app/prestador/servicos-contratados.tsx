@@ -63,7 +63,7 @@ export default function ServicosContratadosPrestador() {
       if (!usuario) throw new Error('ID do fornecedor não encontrado');
       const parsedUsuario = JSON.parse(usuario);
       setUsuarioId(parsedUsuario.id);
-      const response = await fetch(`http://localhost:3000/contratos?fornecedorId=${parsedUsuario.id}`);
+      const response = await fetch(`${process.env.API_URL}/contratos?fornecedorId=${parsedUsuario.id}`);
       const data = await response.json();
       setContratos(data);
     } catch (error) {
@@ -81,7 +81,7 @@ export default function ServicosContratadosPrestador() {
   const encerrarContrato = async (id: string) => {
     try {
       const hoje = new Date().toISOString().split('T')[0];
-      const resposta = await fetch(`http://localhost:3000/contratos/${id}/encerrar`, {
+      const resposta = await fetch(`${process.env.API_URL}/contratos/${id}/encerrar`, {
         method: 'PATCH',
       });
 

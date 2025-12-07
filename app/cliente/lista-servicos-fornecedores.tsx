@@ -3,14 +3,14 @@ import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    Modal,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  Modal,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 
 
@@ -51,7 +51,7 @@ export default function ListaServicosFornecedores() {
     const carregarVinculos = async () => {
       setLoading(true);
       try {
-        const resp = await fetch('http://localhost:3000/usuarios-servicos');
+        const resp = await fetch(`${process.env.API_URL}/usuarios-servicos`);
         const data = await resp.json();
         setVinculos(data || []);
       } catch (error) {
@@ -152,7 +152,7 @@ export default function ListaServicosFornecedores() {
                     fornecedorId: Number(vinculoSelecionado.usuario.id),
                     servicoId: Number(vinculoSelecionado.servico.id),
                   };
-                  const resposta = await fetch('http://localhost:3000/contratos', {
+                  const resposta = await fetch(`${process.env.API_URL}/contratos`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),

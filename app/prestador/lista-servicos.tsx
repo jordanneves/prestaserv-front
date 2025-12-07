@@ -34,7 +34,7 @@ export default function ListaServicos() {
           if (!usuario) throw new Error('ID do fornecedor não encontrado');
           const parsedUsuario = JSON.parse(usuario);
           setUsuarioId(parsedUsuario.id);
-          const response = await fetch(`http://localhost:3000/usuarios-servicos?usuarioId=${parsedUsuario.id}`);
+          const response = await fetch(`${process.env.API_URL}/usuarios-servicos?usuarioId=${parsedUsuario.id}`);
           if (!response.ok) {
             throw new Error('Erro ao buscar serviços');
           }

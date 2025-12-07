@@ -71,7 +71,7 @@ export default function ServicosContratadosCliente() {
       if (!usuario) throw new Error('ID do cliente não encontrado');
       const parsedUsuario = JSON.parse(usuario);
       setUsuarioId(parsedUsuario.id);
-      const response = await fetch(`http://localhost:3000/contratos?clienteId=${parsedUsuario.id}`);
+      const response = await fetch(`${process.env.API_URL}/contratos?clienteId=${parsedUsuario.id}`);
       const data = await response.json();
       setContratos(data);
     } catch (error) {
@@ -86,7 +86,7 @@ export default function ServicosContratadosCliente() {
   const enviarAvaliacao = async () => {
     if (!contratoSelecionado) return;
     try {
-      await fetch(`http://localhost:3000/contratos/${contratoSelecionado.id}/avaliar`, {
+      await fetch(`${process.env.API_URL}/contratos/${contratoSelecionado.id}/avaliar`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

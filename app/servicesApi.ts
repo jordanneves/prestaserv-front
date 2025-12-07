@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/servicos';
+const API_URL = `${process.env.API_URL}/servicos`;
 
 export async function createServico(data: {
   descricao: string;

@@ -1,10 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import {
-    ActivityIndicator, Alert, Modal, SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text, TextInput, TouchableOpacity, View
+  ActivityIndicator, Alert, Modal, SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text, TextInput, TouchableOpacity, View
 } from 'react-native';
 
 
@@ -34,7 +34,7 @@ export default function ListaTodosServicos() {
           const parsed = JSON.parse(usuario);
           setUsuarioId(parsed.id);
         }
-        const resp = await fetch('http://localhost:3000/servicos');
+        const resp = await fetch(`${process.env.API_URL}/servicos`);
         const data = await resp.json();
         setServicos(data || []);
       } catch (error) {
@@ -109,7 +109,7 @@ export default function ListaTodosServicos() {
                     if (!usuarioId || !servicoSelecionado) return;
                     try {
                       setLoading(true);
-                      const resp = await fetch('http://localhost:3000/usuarios-servicos', {
+                      const resp = await fetch(`${process.env.API_URL}/usuarios-servicos`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({

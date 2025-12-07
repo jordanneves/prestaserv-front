@@ -33,7 +33,7 @@ export default function ListaServicosCliente() {
       const carregarServicos = async () => {
         setLoading(true);
         try {
-          const response = await fetch('http://localhost:3000/servicos');
+          const response = await fetch(`${process.env.API_URL}/servicos`);
           const data = await response.json();
           setServicos(data);
         } catch (error) {
@@ -57,7 +57,7 @@ export default function ListaServicosCliente() {
     setModalVisible(false);
 
     try {
-      const resposta = await fetch('http://localhost:3000/contratos', {
+      const resposta = await fetch(`${process.env.API_URL}/contratos`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ servicoId: servicoSelecionado.id }),

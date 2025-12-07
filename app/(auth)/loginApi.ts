@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/usuarios/login';
+const API_URL = `${process.env.API_URL}/usuarios/login`;
 
 export async function loginUsuario(data: { email: string; senha: string }) {
   const response = await fetch(API_URL, {
