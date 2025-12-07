@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
+import client from '../../src/api/client';
 import {
     ActivityIndicator, Alert, Modal, SafeAreaView,
     ScrollView,
@@ -34,9 +35,8 @@ export default function ListaTodosServicos() {
           const parsed = JSON.parse(usuario);
           setUsuarioId(parsed.id);
         }
-        const resp = await fetch('http://localhost:3000/servicos');
-        const data = await resp.json();
-        setServicos(data || []);
+  const data = await client.get('/servicos');
+  setServicos(Array.isArray(data) ? data : []);
       } catch (error) {
         setServicos([]);
       } finally {
@@ -107,19 +107,14 @@ export default function ListaTodosServicos() {
                   style={styles.botaoSalvar}
                   onPress={async () => {
                     if (!usuarioId || !servicoSelecionado) return;
-                    try {
+                      try {
                       setLoading(true);
-                      const resp = await fetch('http://localhost:3000/usuarios-servicos', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
+                      await client.post('/usuarios-servicos', {
                           usuario: { id: usuarioId },
                           servico: { id: servicoSelecionado.id },
                           precoPersonalizado: preco,
                           descricao: descricao,
-                        }),
                       });
-                      if (!resp.ok) throw new Error('Erro ao adicionar serviço');
                       Alert.alert('Sucesso', 'Serviço adicionado ao usuário!');
                       setModalVisible(false);
                     } catch (error) {

@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
-import { loginUsuario } from './loginApi';
+import { loginUsuario } from '../../src/api/loginApi';
 
 export default function Login() {
   const router = useRouter();

@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { createUsuario } from './registerApi';
+import { createUsuario } from '../../src/api/registerApi';
 
 export default function Register() {
   const router = useRouter();

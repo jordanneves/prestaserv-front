@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
+import client from '../../src/api/client';
 import {
     ActivityIndicator,
     Modal,
@@ -51,9 +52,8 @@ export default function ListaServicosFornecedores() {
     const carregarVinculos = async () => {
       setLoading(true);
       try {
-        const resp = await fetch('http://localhost:3000/usuarios-servicos');
-        const data = await resp.json();
-        setVinculos(data || []);
+  const data = await client.get('/usuarios-servicos');
+  setVinculos(Array.isArray(data) ? data : []);
       } catch (error) {
         setVinculos([]);
       } finally {
@@ -152,12 +152,7 @@ export default function ListaServicosFornecedores() {
                     fornecedorId: Number(vinculoSelecionado.usuario.id),
                     servicoId: Number(vinculoSelecionado.servico.id),
                   };
-                  const resposta = await fetch('http://localhost:3000/contratos', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload),
-                  });
-                  if (!resposta.ok) throw new Error('Erro ao contratar serviço');
+                  await client.post('/contratos', payload);
                   setMensagemFeedback('Serviço contratado com sucesso!');
                   setTipoFeedback('sucesso');
                 } catch (err) {

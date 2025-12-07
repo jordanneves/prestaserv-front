@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
+import client from '../../src/api/client';
 import { ActivityIndicator, FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export type Servico = {
@@ -61,11 +62,10 @@ export default function ServicosContratadosPrestador() {
     try {
       const usuario = await AsyncStorage.getItem('usuario');
       if (!usuario) throw new Error('ID do fornecedor não encontrado');
-      const parsedUsuario = JSON.parse(usuario);
-      setUsuarioId(parsedUsuario.id);
-      const response = await fetch(`http://localhost:3000/contratos?fornecedorId=${parsedUsuario.id}`);
-      const data = await response.json();
-      setContratos(data);
+  const parsedUsuario = JSON.parse(usuario);
+  setUsuarioId(parsedUsuario.id);
+  const data = await client.get(`/contratos?fornecedorId=${parsedUsuario.id}`);
+  setContratos(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Erro ao carregar contratos:', error);
     } finally {
@@ -81,11 +81,7 @@ export default function ServicosContratadosPrestador() {
   const encerrarContrato = async (id: string) => {
     try {
       const hoje = new Date().toISOString().split('T')[0];
-      const resposta = await fetch(`http://localhost:3000/contratos/${id}/encerrar`, {
-        method: 'PATCH',
-      });
-
-      if (!resposta.ok) throw new Error('Erro ao encerrar contrato.');
+      await client.patch(`/contratos/${id}/encerrar`);
 
       setContratos((prev) =>
         prev.map((c) =>

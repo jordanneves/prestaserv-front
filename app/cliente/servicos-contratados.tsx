@@ -71,9 +71,22 @@ export default function ServicosContratadosCliente() {
       if (!usuario) throw new Error('ID do cliente não encontrado');
       const parsedUsuario = JSON.parse(usuario);
       setUsuarioId(parsedUsuario.id);
-      const response = await fetch(`http://localhost:3000/contratos?clienteId=${parsedUsuario.id}`);
-      const data = await response.json();
-      setContratos(data);
+      const token = await AsyncStorage.getItem('token');
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      // use central client for requests
+      const client = (await import('../../src/api/client')).default;
+      const data = await client.get(`/contratos?clienteId=${parsedUsuario.id}`).catch((err: any) => {
+        console.warn('carregarContratos erro:', err.message || err);
+        return null;
+      });
+
+      if (!Array.isArray(data)) {
+        setContratos([]);
+      } else {
+        setContratos(data);
+      }
     } catch (error) {
       console.error('Erro ao carregar contratos:', error);
     } finally {
@@ -86,13 +99,10 @@ export default function ServicosContratadosCliente() {
   const enviarAvaliacao = async () => {
     if (!contratoSelecionado) return;
     try {
-      await fetch(`http://localhost:3000/contratos/${contratoSelecionado.id}/avaliar`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...avaliacao,
-          dataConclusao: contratoSelecionado.dataConclusao
-        }),
+      const client = (await import('../../src/api/client')).default;
+      await client.patch(`/contratos/${contratoSelecionado.id}/avaliar`, {
+        ...avaliacao,
+        dataConclusao: contratoSelecionado.dataConclusao,
       });
 
       setModalVisible(false);

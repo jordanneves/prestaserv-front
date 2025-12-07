@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
+import client from '../../src/api/client';
 import {
   ActivityIndicator,
   Alert,
@@ -34,13 +35,9 @@ export default function ListaServicos() {
           if (!usuario) throw new Error('ID do fornecedor não encontrado');
           const parsedUsuario = JSON.parse(usuario);
           setUsuarioId(parsedUsuario.id);
-          const response = await fetch(`http://localhost:3000/usuarios-servicos?usuarioId=${parsedUsuario.id}`);
-          if (!response.ok) {
-            throw new Error('Erro ao buscar serviços');
-          }
-          const data = await response.json();
+          const data = await client.get(`/usuarios-servicos?usuarioId=${parsedUsuario.id}`);
           // Ajusta para o formato esperado pelo componente
-          const servicos = (data || []).map((item: any) => ({
+          const servicos = (Array.isArray(data) ? data : []).map((item: any) => ({
             id: item.servico?.id?.toString() || item.id?.toString() || '',
             descricao: item.servico?.descricao || '',
             tipoServico: item.servico?.tipoServico || '',

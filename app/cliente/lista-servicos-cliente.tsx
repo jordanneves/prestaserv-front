@@ -1,5 +1,6 @@
 import { router, useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
+import client from '../../src/api/client';
 import {
   ActivityIndicator,
   FlatList,
@@ -33,9 +34,8 @@ export default function ListaServicosCliente() {
       const carregarServicos = async () => {
         setLoading(true);
         try {
-          const response = await fetch('http://localhost:3000/servicos');
-          const data = await response.json();
-          setServicos(data);
+          const data = await client.get('/servicos');
+          setServicos(Array.isArray(data) ? data : []);
         } catch (error) {
           console.error('Erro ao carregar serviços:', error);
         } finally {
@@ -57,14 +57,7 @@ export default function ListaServicosCliente() {
     setModalVisible(false);
 
     try {
-      const resposta = await fetch('http://localhost:3000/contratos', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ servicoId: servicoSelecionado.id }),
-      });
-
-      if (!resposta.ok) throw new Error('Erro ao contratar');
-
+      await client.post('/contratos', { servicoId: servicoSelecionado.id });
       setMensagemFeedback(`Serviço "${servicoSelecionado.descricao}" contratado com sucesso!`);
       setTipoFeedback('sucesso');
     } catch (err) {

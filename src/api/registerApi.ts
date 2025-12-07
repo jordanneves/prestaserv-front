@@ -1,4 +1,4 @@
-import client from '../../src/api/client';
+import client from './client';
 
 export async function createUsuario(data: {
   nome: string;

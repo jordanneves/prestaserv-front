@@ -1,16 +1,6 @@
-const API_URL = 'http://localhost:3000/usuarios/login';
+import client from '../../src/api/client';
 
 export async function loginUsuario(data: { email: string; senha: string }) {
-  const response = await fetch(API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  });
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.message || 'Email ou senha inválidos');
-  }
-  return response.json();
+  // Use client.post so request parsing/throwing is consistent. The client won't send Authorization for this request.
+  return client.post('/usuarios/login', data);
 }

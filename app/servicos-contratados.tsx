@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
+import client from '../src/api/client';
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function ServicosContratados() {
@@ -14,13 +15,11 @@ export default function ServicosContratados() {
       setLoading(true);
       setErro('');
       try {
-        const usuarioStr = await AsyncStorage.getItem('usuario');
-        if (!usuarioStr) throw new Error('Usuário não encontrado');
-        const usuario = JSON.parse(usuarioStr);
-        const res = await fetch(`http://localhost:3000/contratos?clienteId=${usuario?.id}`);
-        if (!res.ok) throw new Error('Erro ao buscar serviços');
-        const data = await res.json();
-        setServicos(data);
+  const usuarioStr = await AsyncStorage.getItem('usuario');
+  if (!usuarioStr) throw new Error('Usuário não encontrado');
+  const usuario = JSON.parse(usuarioStr);
+  const data = await client.get(`/contratos?clienteId=${usuario?.id}`);
+  setServicos(Array.isArray(data) ? data : []);
       } catch (e: any) {
         setErro(e.message || 'Erro desconhecido');
       } finally {
