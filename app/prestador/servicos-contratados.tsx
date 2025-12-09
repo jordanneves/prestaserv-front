@@ -113,7 +113,7 @@ export default function ServicosContratadosPrestador() {
         <Text style={styles.label}>Tipo: <Text style={styles.value}>{item.servico.tipoServico}</Text></Text>
         <Text style={styles.label}>Valor: <Text style={styles.value}>R$ {item.servico.valorHora}</Text></Text>
         <Text style={styles.label}>Descrição: <Text style={styles.value}>{item.servico.mensagem}</Text></Text>
-        <Text style={styles.label}>Cliente: <Text style={styles.value}>{item.cliente.nome}</Text></Text>
+        <Text style={styles.label}>Cliente: <Text style={styles.value}>{item.cliente?.nome || 'N/A'}</Text></Text>
         {item.data && (
           <Text style={styles.label}>Data: <Text style={styles.value}>{new Date(item.data).toLocaleDateString()}</Text></Text>
         )}

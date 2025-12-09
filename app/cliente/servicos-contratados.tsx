@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router, useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
+import client from '../../src/api/client';
 import {
   ActivityIndicator,
   FlatList,
@@ -19,6 +20,7 @@ export type Servico = {
   valorHora: string;
   mensagem: string;
 };
+
 export type Fornecedor = {
   id: number;
   nome: string;
@@ -28,6 +30,7 @@ export type Fornecedor = {
   tipo: string;
   email: string;
 };
+
 export type Cliente = {
   id: number;
   nome: string;
@@ -37,6 +40,7 @@ export type Cliente = {
   tipo: string;
   email: string;
 };
+
 export type Contrato = {
   id: string;
   servico: Servico;
@@ -71,16 +75,8 @@ export default function ServicosContratadosCliente() {
       if (!usuario) throw new Error('ID do cliente não encontrado');
       const parsedUsuario = JSON.parse(usuario);
       setUsuarioId(parsedUsuario.id);
-      const token = await AsyncStorage.getItem('token');
-      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-      if (token) headers['Authorization'] = `Bearer ${token}`;
 
-      // use central client for requests
-      const client = (await import('../../src/api/client')).default;
-      const data = await client.get(`/contratos?clienteId=${parsedUsuario.id}`).catch((err: any) => {
-        console.warn('carregarContratos erro:', err.message || err);
-        return null;
-      });
+      const data = await client.get(`/contratos?clienteId=${parsedUsuario.id}`);
 
       if (!Array.isArray(data)) {
         setContratos([]);
@@ -89,6 +85,7 @@ export default function ServicosContratadosCliente() {
       }
     } catch (error) {
       console.error('Erro ao carregar contratos:', error);
+      setContratos([]);
     } finally {
       setLoading(false);
     }
@@ -99,7 +96,6 @@ export default function ServicosContratadosCliente() {
   const enviarAvaliacao = async () => {
     if (!contratoSelecionado) return;
     try {
-      const client = (await import('../../src/api/client')).default;
       await client.patch(`/contratos/${contratoSelecionado.id}/avaliar`, {
         ...avaliacao,
         dataConclusao: contratoSelecionado.dataConclusao,
@@ -131,11 +127,11 @@ export default function ServicosContratadosCliente() {
 
     return (
       <View style={styles.card}>
-        <Text style={styles.label}>Serviço: <Text style={styles.value}>{item.servico.descricao}</Text></Text>
-        <Text style={styles.label}>Tipo: <Text style={styles.value}>{item.servico.tipoServico}</Text></Text>
-        <Text style={styles.label}>Valor: <Text style={styles.value}>R$ {item.servico.valorHora}</Text></Text>
-        <Text style={styles.label}>Descrição: <Text style={styles.value}>{item.servico.mensagem}</Text></Text>
-        <Text style={styles.label}>Fornecedor: <Text style={styles.value}>{item.fornecedor.nome}</Text></Text>
+        <Text style={styles.label}>Serviço: <Text style={styles.value}>{item.servico?.descricao || 'N/A'}</Text></Text>
+        <Text style={styles.label}>Tipo: <Text style={styles.value}>{item.servico?.tipoServico || 'N/A'}</Text></Text>
+        <Text style={styles.label}>Valor: <Text style={styles.value}>R$ {item.servico?.valorHora || 0}</Text></Text>
+        <Text style={styles.label}>Descrição: <Text style={styles.value}>{item.servico?.mensagem || 'N/A'}</Text></Text>
+        <Text style={styles.label}>Fornecedor: <Text style={styles.value}>{item.fornecedor?.nome || 'N/A'}</Text></Text>
         {item.data && (
           <Text style={styles.label}>Data: <Text style={styles.value}>{new Date(item.data).toLocaleDateString()}</Text></Text>
         )}
@@ -159,8 +155,8 @@ export default function ServicosContratadosCliente() {
     );
   };
 
-  // Se quiser garantir o filtro mesmo se a API não filtrar corretamente:
-  const contratosFiltrados = usuarioId ? contratos.filter(c => c.cliente?.id === Number(usuarioId)) : [];
+  // A API já filtra por clienteId, então usamos diretamente os dados retornados
+  const contratosFiltrados = contratos;
 
   return (
     <View style={styles.container}>
