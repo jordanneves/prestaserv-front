@@ -8,7 +8,7 @@ module.exports = ({ config }) => {
       ...(config.extra || {}),
         // Use process.env.API_URL when available (Render or local env).
         // Fallback to the previously used Render host for safety.
-        API_URL: process.env.API_URL || 'https://prestaserv-api-68y8.onrender.com',
+        API_URL: 'https://prestaserv-api-68y8.onrender.com',
     },
   };
 };

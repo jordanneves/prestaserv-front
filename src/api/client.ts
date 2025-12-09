@@ -9,7 +9,7 @@ const BASE_URL =
   (Constants.expoConfig && (Constants.expoConfig.extra?.API_URL || Constants.expoConfig.extra?.apiUrl)) ||
   (Constants.manifest && (Constants.manifest.extra?.API_URL || Constants.manifest.extra?.apiUrl)) ||
   (typeof process !== 'undefined' && (process.env?.API_URL)) ||
-  'http://localhost:3000';
+  'https://prestaserv-api-68y8.onrender.com';
 
 // Helpful log to confirm which base URL is used at runtime
 if (__DEV__) {
